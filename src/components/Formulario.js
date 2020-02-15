@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
+import { obtenerDiferenciaYear, calcularMarca } from '../Helper';
 
 const Campo = styled.div`
     display: flex;
@@ -40,6 +41,15 @@ const ButtonA = styled.button`
         cursor: pointer;
     }
 `;
+
+const Error = styled.div`
+    background-color: red;
+    color: white;
+    padding: 1rem;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 2rem;
+`;
 const Formulario = () => {
 
     //state for 
@@ -48,6 +58,7 @@ const Formulario = () => {
         year: '',
         plan: ''
     });
+    const [error, saveError] = useState(false);
 
     // extraer los valores del state
     const { marca, year, plan} = data;
@@ -60,9 +71,45 @@ const Formulario = () => {
         })
     }
 
+    //when the user press submit
+    const cotizarSeguro = e => {
+        e.preventDefault();
+
+        if(marca.trim() === '' || year.trim() === '' || plan.trim() === ''){
+            saveError(true);
+            return;
+        }
+        saveError(false);
+
+        //base 
+
+        let resultado = 2000;
+
+        // obtener la direrencia
+        const diferencia = obtenerDiferenciaYear(year);
+
+        // por cada año restar el 3%
+        resultado -= ((diferencia * 3) * resultado) / 100;
+
+        // cada marca tiene un valor
+        // Americano 15%
+        // Asiatico 5%
+        // Europeo 30%
+        resultado = calcularMarca(marca) * resultado;
+        console.log(resultado)
+
+        // casico 20%, completo 50% 
+
+
+        //openter el total
+    }
+
     return ( 
         <>
-            <form>
+            <form
+                onSubmit={cotizarSeguro}
+            >
+                { error ? <Error>Todos los campos son obligatorios</Error> : null }
                 <Campo>
                     <Label htmlFor="">Marca</Label>
                     <Select
@@ -100,7 +147,6 @@ const Formulario = () => {
                     <InputRadio type="radio"
                             name="plan"
                             value= "basico"
-                            defaultChecked
                             checked={plan === "basico"}
                             onChange={getInformation}
                     /> Básico
@@ -114,7 +160,7 @@ const Formulario = () => {
                 </Campo>
 
                 <Campo>
-                    <ButtonA type="button">
+                    <ButtonA type="submit">
                         Cotizar
                     </ButtonA>
                 </Campo>
