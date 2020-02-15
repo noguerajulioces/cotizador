@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
 
 const Campo = styled.div`
@@ -41,12 +41,35 @@ const ButtonA = styled.button`
     }
 `;
 const Formulario = () => {
+
+    //state for 
+    const [data, saveData] = useState({
+        marca: '',
+        year: '',
+        plan: ''
+    });
+
+    // extraer los valores del state
+    const { marca, year, plan} = data;
+
+    // leer los datos del formulario y colocar en state
+    const getInformation = e => {
+        saveData({
+            ...data,
+            [e.target.name] : e.target.value
+        })
+    }
+
     return ( 
         <>
             <form>
                 <Campo>
                     <Label htmlFor="">Marca</Label>
-                    <Select>
+                    <Select
+                        name="marca"
+                        value={marca}
+                        onChange={getInformation}
+                    >
                         <option value="">Seleccione</option>
                         <option value="americano">Americano</option>
                         <option value="europeo">Europeo</option>
@@ -56,7 +79,11 @@ const Formulario = () => {
 
                 <Campo>
                     <Label htmlFor="">Año</Label>
-                    <Select>
+                    <Select
+                        name="year"
+                        value={year}
+                        onChange={getInformation}
+                    >
                         <option value="">Seleccione</option>
                         <option value="2020">2020</option>
                         <option value="2019">2019</option>
@@ -74,11 +101,15 @@ const Formulario = () => {
                             name="plan"
                             value= "basico"
                             defaultChecked
+                            checked={plan === "basico"}
+                            onChange={getInformation}
                     /> Básico
 
                     <InputRadio type="radio"
                             name="plan"
                             value= "completo"
+                            checked={plan === "completo"}
+                            onChange={getInformation}
                     /> Completo
                 </Campo>
 
